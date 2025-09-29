@@ -1,14 +1,15 @@
 # Melanoma Detection using Transfer Learning with MobileNetV2
 
+## Code and Notebook  
+
+The full implementation, including data preprocessing, model training, and evaluation, is available in this Jupyter Notebook:  
+👉 [Melanoma_TransferLearning_MobileNetV2.ipynb](notebooks/Melanoma_TransferLearning_MobileNetV2.ipynb)
+
 ## Introduction  
-Transfer learning has become a powerful approach in computer vision, especially for medical imaging tasks where annotated datasets are often limited. Instead of training models from scratch, pretrained convolutional neural networks (CNNs) can be fine-tuned to leverage knowledge gained from large-scale datasets like ImageNet. This strategy enables faster convergence, reduces computational costs, and often yields higher accuracy in specialized domains such as disease classification.  
 
-In this project, transfer learning is applied using the MobileNetV2 architecture to the task of melanoma detection, where early and reliable diagnosis is crucial for improving patient outcomes.  
+This project applies **transfer learning with MobileNetV2** to the task of melanoma detection. The goal is to adapt pretrained ImageNet features for reliable classification of skin lesions, improving early diagnosis while keeping the model lightweight and efficient.  
 
-## Dataset  
-The dataset used in this project is sourced from [Kaggle’s Melanoma Cancer Dataset](https://www.kaggle.com/datasets/bhaveshmittal/melanoma-cancer-dataset/data). It contains **13,900 high-quality dermoscopic images**, uniformly resized to **224×224 pixels**, representing both benign and malignant skin lesions.  
-
-The dataset was curated to support research in dermatology and computer-aided diagnostics, with the goal of enabling the development of machine learning models that can distinguish between healthy and cancerous tissue. Its diversity of lesion appearances provides a realistic challenge for classification tasks, making it a suitable benchmark for evaluating the effectiveness of transfer learning approaches in medical image analysis.  
+The work is based on the [Kaggle Melanoma Cancer Dataset](https://www.kaggle.com/datasets/bhaveshmittal/melanoma-cancer-dataset/data), which contains **13,900 dermoscopic images (224×224 px)** of benign and malignant cases. Its diversity makes it a strong benchmark for testing transfer learning approaches in medical image analysis.  
 
 ## Model Architecture  
 I implemented and evaluated three configurations of the **MobileNetV2** convolutional neural network, all based on a common architecture that utilized the pretrained MobileNetV2 backbone as a feature extractor. The base model was initialized with **ImageNet weights** and configured without the top classification layer (`include_top=False`). A custom classification head was appended to adapt the model for binary classification.  
@@ -29,22 +30,25 @@ I implemented and evaluated three configurations of the **MobileNetV2** convolut
 
 ## Experiments  
 Three experimental configurations were tested to evaluate the effect of transfer learning and fine-tuning:  
-1. **Fully frozen base model**
-   > All layers of the MobileNetV2 base were frozen, and only the classification head was trained. This setup achieved a test accuracy of 88.05%, F1-score of 0.8757, and Recall for Malignant class 0.89.
-2. **Partially fine-tuned base model (last 30 layers unfrozen)**
-   > In this configuration, the final 30 layers of MobileNetV2 were unfrozen to allow deeper feature adaptation. This improved performance slightly, achieving the highest test accuracy of 88.91%, F1-score of 0.8848, and Recall for Malignant class 0.90. Fine-tuning enabled the model to adjust more complex features to the specific characteristics of skin lesion images, helping it generalises better to unseen data.
-3. **Fine-tuned base with data augmentation**
-   > The third approach incorporated the same fine-tuning strategy but also applied real-time data augmentation (random flips, rotations, zoom, and translations) to increase the diversity and robustness of the training data. This setup reached a test accuracy of 88.05%, F1-score of 0.8680, and Recall for Malignant class 0.83. The model with data augmentation showed steady progress during training, and although we increased the number of epochs, it did not outperform the fine-tuned model—likely due to the added complexity and regularization introduced by augmentation, which can slow convergence.
 
-Among the three configurations, the **partially fine-tuned model (last 30 layers unfrozen)** achieved the best overall performance. It slightly outperformed the others in accuracy, F1-score, and especially **recall for the Malignant class**, which is crucial in medical diagnosis to minimize false negatives.  
+| Configuration                                | Epochs | Accuracy | F1-score | Recall (Malignant) |
+|---------------------------------------------|--------|----------|----------|---------------------|
+| Frozen MobileNetV2 base + custom head        | 10     | **88.05%** | 0.8757   | 0.89                |
+| Partially fine-tuned MobileNetV2 (last 30 layers unfrozen) | 10     | **88.91%** | 0.8848   | **0.90**            |
+| Fine-tuned MobileNetV2 with data augmentation | 30     | **88.05%** | 0.8680   | 0.83                |
 
+### Analysis  
 
+The **frozen base model with only a custom classification head** produced a strong baseline, successfully transferring general ImageNet features but showing limited adaptation to the unique visual characteristics of melanoma lesions.  
 
-<p align="center">  
-  <img src="training.png" width="500"/>  
-</p>  
+The **partially fine-tuned model (last 30 layers unfrozen)** provided the best results. Allowing deeper layers to adapt to lesion-specific features improved generalization and delivered the highest recall, which is especially critical in medical applications where false negatives must be minimized.  
 
-*Figure 1. MobileNetV2 Training and Validation Loss*  
+The **fine-tuned model with additional data augmentation**, even when trained for longer, demonstrated steady learning but did not surpass the selectively fine-tuned configuration. The increased complexity and regularization from augmentation likely slowed convergence and reduced sensitivity to malignant cases.  
+
+### Final Conclusion  
+
+Among the three strategies, the **partially fine-tuned MobileNetV2** demonstrated the most effective trade-off between accuracy, F1-score, and recall. This highlights the importance of selective fine-tuning in transfer learning, as it allows the model to adapt deeper layers to domain-specific features without over-regularization. For melanoma detection tasks, where minimizing false negatives is critical, this configuration provides the most reliable results.  
+
 
 ## Contributions  
 This project contributes by:  
