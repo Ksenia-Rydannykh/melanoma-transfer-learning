@@ -3,7 +3,7 @@
 ## Code and Notebook  
 
 The full implementation, including data preprocessing, model training, and evaluation, is available in this Jupyter Notebook:  
-👉 [Melanoma_TransferLearning_MobileNetV2.ipynb](notebooks/Melanoma_TransferLearning_MobileNetV2.ipynb)
+👉 [Melanoma_TransferLearning_MobileNetV2.ipynb](Melanoma_TransferLearning_MobileNetV2.ipynb)
 
 ## Introduction  
 
